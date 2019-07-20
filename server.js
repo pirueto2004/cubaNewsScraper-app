@@ -27,8 +27,10 @@ app.use(express.static("public"));
 var databaseUrl = "news";
 
 // mongoose.Promise = Promise; 
-// var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/"+ databaseUrl;
-mongoose.connect("mongodb://localhost/"+ databaseUrl);
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/"+ databaseUrl;
+mongoose.connect(MONGODB_URI);
+mongoose.connect('mongodb://localhost:27017/myapp', {useNewUrlParser: true});
+
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection error:"));
 
@@ -75,42 +77,73 @@ app.get("/scrape", function(req, res) {
     // For each element with a "g-big-story" class
     $("div.g-regular-story article").each(function(i, element) {
 
+      // Save an empty result object
+      var result = {};
+
+      // Add the text and href of every link, and save them as properties of the result object
+      result.title = $(this)
+        .find("h2")
+        .text()
+        .trim();
+      result.href = $(this)
+        .find("h2 a")
+        .attr("href");
+      result.link = "http://en.granma.cu" + result.href;
+      result.intro = $(this)
+        .find(".sumario p")
+        .text()
+        .trim();
+
       // trim() removes whitespace because the items return \n and \t before and after the text
-      var title = $(element).find("h2").text().trim();
-      var href = $(element).find("h2 a").attr("href");
-      var link = "http://en.granma.cu" + href;
-      var intro = $(element).find(".sumario p").text().trim();
+      // var title = $(element).find("h2").text().trim();
+      // var href = $(element).find("h2 a").attr("href");
+      // var link = "http://en.granma.cu" + href;
+      // var intro = $(element).find(".sumario p").text().trim();
       // var intro = $(element).children("div.sumario").text().trim();
-      console.log("Title: " + title);
-      console.log("Link: " + link);
-      console.log("Summary: " + intro);
+      console.log("Title: " + result.title);
+      console.log("Link: " + result.link);
+      console.log("Summary: " + result.intro);
+
+      // Create a new Article using the `result` object built from scraping
+      db.Article.create(result)
+        .then(function(dbArticle) {
+          // View the added result in the console
+          console.log(dbArticle);
+        })
+        .catch(function(err) {
+          // If an error occurred, log it
+          console.log(err);
+        });
+      });
 
       // if these are present in the scraped data, create an article in the database collection
-      if (title && link && intro) {
-        db.Article.create({
-            title: title,
-            link: link,
-            intro: intro
-          },
-          function(err, inserted) {
-            if (err) {
-              // log the error if one is encountered during the query
-              console.log(err);
-            } else {
-              // otherwise, log the inserted data
-              console.log(inserted);
-            }
-          });
-        // if there are 10 articles, then return the callback to the frontend
-        console.log(i);
-        if (i === 10) {
-          return res.sendStatus(200);
-        }
-      }
-    });
-  });
-   // Send a "Scrape Complete" message to the browser
+    //   if (result.title && result.link && result.intro) {
+    //     db.Article.create({
+    //       result
+    //         // title: title,
+    //         // link: link,
+    //         // intro: intro
+    //       },
+    //       function(err, inserted) {
+    //         if (err) {
+    //           // log the error if one is encountered during the query
+    //           console.log(err);
+    //         } else {
+    //           // otherwise, log the inserted data
+    //           console.log(inserted);
+    //         }
+    //       });
+    //     // if there are 10 articles, then return the callback to the frontend
+    //     console.log(i);
+    //     if (i === 10) {
+    //       return res.sendStatus(200);
+    //     }
+    //   }
+    // });
+    // Send a "Scrape Complete" message to the browser
    res.send("Scrape Complete");
+  });
+   
 });
 
 // route for retrieving all the saved articles
