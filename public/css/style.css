@@ -1,0 +1,26 @@
+.jumbotron {
+    background: url("../img/cuba-travel-2.jpg") no-repeat center center;
+    background-size: cover;
+    height: 300px;
+  }
+  
+  .display-4 {
+    font-size: 60px;
+    font-weight: bolder;
+  }
+  
+  .lead {
+    font-size: 40px;
+    font-weight: bolder;
+    position: relative;
+    top: 100%;
+  }
+  
+  .btn-primary {
+    background-color: #345c43;
+    color: white !important;
+  }
+  
+  .comment-item-list {
+    padding: 5px;
+  }
