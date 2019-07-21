@@ -23,9 +23,6 @@ app.use(bodyParser.json({
 // serve the public directory
 app.use(express.static("public"));
 
-//Database configuration. Use promises with Mongo and connect to the database
-// var databaseUrl = "news";
-
 //Set up promises with mongoose
 mongoose.Promise = Promise; 
 
@@ -69,57 +66,51 @@ app.get("/", function(req, res) {
     })
 });
 
+//Routes
 
-// Scrape data from the site and place it into the mongodb db
+// A GET route for scraping the website and place it into the mongodb db
 app.get("/scrape", function(req, res) {
-  // Make a request via axios for the news section
+  // First, we grab the body of the html with axios
   axios.get("http://en.granma.cu").then(function(response) {
-    // Load the html body from axios into cheerio
+    // Load the html body from axios into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
-  // request("http://en.granma.cu/", function(error, response, html) {
-    // Load the html body from request into cheerio
-    // var $ = cheerio.load(html);
-    // For each element with a "g-big-story" class
-    $("div.g-regular-story article").each(function(i, element) {
 
-      // Save an empty result object
+    // Now, we grab every 'article' tag within 'div' with 'g-regular-story' class, and do the following:
+     $("div.g-regular-story article").each(function(i, element) {
+
+      // Create an empty result object
       var result = {};
 
-      // Add the text and href of every link, and save them as properties of the result object
+      // Add the h2 text and href of every link, and the p tag with 'sumario' class, and save them as properties of the result object
       result.title = $(this)
         .find("h2")
         .text()
         .trim();
+      //We grab the string provided in href
       result.href = $(this)
         .find("h2 a")
         .attr("href");
+      //Build the actual link by prepending the website url to the href string
       result.link = "http://en.granma.cu" + result.href;
       result.intro = $(this)
         .find(".sumario p")
         .text()
         .trim();
 
-      // trim() removes whitespace because the items return \n and \t before and after the text
-      // var title = $(element).find("h2").text().trim();
-      // var href = $(element).find("h2 a").attr("href");
-      // var link = "http://en.granma.cu" + href;
-      // var intro = $(element).find(".sumario p").text().trim();
-      // var intro = $(element).children("div.sumario").text().trim();
-      console.log("Title: " + result.title);
-      console.log("Link: " + result.link);
-      console.log("Summary: " + result.intro);
-
+      // if these are present in the scraped data, create an article in the database collection
       // Create a new Article using the `result` object built from scraping
-      db.Article.create(result)
-        .then(function(dbArticle) {
-          // View the added result in the console
-          console.log(dbArticle);
-        })
-        .catch(function(err) {
-          // If an error occurred, log it
-          console.log(err);
-        });
-      });
+      if (result.title && result.link && result.intro) {
+        db.Article.create(result)
+          .then(function(dbArticle) {
+            // View the added result in the console
+            console.log(dbArticle);
+          })
+          .catch(function(err) {
+            // If an error occurred, log it
+            console.log(err);
+          });
+      };
+    });
 
       // if these are present in the scraped data, create an article in the database collection
     //   if (result.title && result.link && result.intro) {
