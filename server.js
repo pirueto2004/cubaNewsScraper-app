@@ -24,19 +24,25 @@ app.use(bodyParser.json({
 app.use(express.static("public"));
 
 //Database configuration. Use promises with Mongo and connect to the database
-var databaseUrl = "news";
+// var databaseUrl = "news";
 
-// mongoose.Promise = Promise; 
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/"+ databaseUrl;
-mongoose.connect(MONGODB_URI);
-mongoose.connect('mongodb://localhost:27017/myapp', {useNewUrlParser: true});
+//Set up promises with mongoose
+mongoose.Promise = Promise; 
+// var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/"+ databaseUrl;
+mongoose.connect(
+  process.env.MONGODB_URI || "mongodb://pirueto2004:Timbre1966@ds253017.mlab.com:53017/heroku_c5n69kd3",
+  {
+    useMongoClient : true
+  }
+);
+// mongoose.connect('mongodb://localhost:27017/myapp', {useNewUrlParser: true});
 
-var db = mongoose.connection;
-db.on("error", console.error.bind(console, "Connection error:"));
+// var db = mongoose.connection;
+// db.on("error", console.error.bind(console, "Connection error:"));
 
-db.once("open", function(){
-  console.log("Connected to Mongoose!");
-});
+// db.once("open", function(){
+//   console.log("Connected to Mongoose!");
+// });
 
 // use handlebars
 app.engine("handlebars", exphbs({
