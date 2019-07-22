@@ -2,6 +2,7 @@
     background: url("../img/cuba-travel-2.jpg") no-repeat center center;
     background-size: cover;
     height: 300px;
+    padding-bottom: 0px;
   }
   
   .display-4 {
