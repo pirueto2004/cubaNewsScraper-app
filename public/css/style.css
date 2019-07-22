@@ -10,10 +10,12 @@
   }
   
   .lead {
+    width: 100%;
     font-size: 40px;
     font-weight: bolder;
     position: relative;
     top: 100%;
+    margin-bottom: 0px;
   }
   
   .btn-primary {
