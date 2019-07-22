@@ -147,6 +147,8 @@ app.get("/saved", function(req, res) {
   db.Article.find({
       saved: true
     })
+    // ..and populate all of the notes associated with it
+    .populate("comment")
     .then(function(dbArticle) {
       // if successful, then render with the handlebars saved page
       res.render("saved", {
