@@ -84,8 +84,8 @@ $(document).ready(function() {
       event.preventDefault();
       // Grab the id associated with the article from the submit button
       // var thisId = $(this).attr("data-id");
-      // var articleId = $("#add-comment-modal").attr("data-articleId")
-      var articleId = $(this).attr("data-articleId");
+      var articleId = $("#add-comment-modal").attr("data-articleId");
+      // var articleId = $(this).attr("data-articleId");
       var newComment = {
         body: $("#comment-body").val().trim()
       }
