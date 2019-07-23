@@ -48,7 +48,7 @@ $(document).ready(function() {
       var commentDeleteBtn;
       console.log("data comments length ", data.comments.length)
       for (var i = 0; i < data.comments.length; i++) {
-        commentItem = $("<li>").text(data.comments[i].body);
+        commentItem = $("<li class='list-group-item'>").text(data.comments[i].body);
         commentItem.addClass("comment-item-list");
         commentItem.attr("id", data.comments[i]._id);
         
