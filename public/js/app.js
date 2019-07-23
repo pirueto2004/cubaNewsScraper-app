@@ -40,20 +40,20 @@ $(document).ready(function() {
       );
     });
   
-    // generate the text inside the notes modal
+    // generate the text inside the comments modal
     function createModalHTML(data) {
       var modalText = data.title;
       $("#comment-modal-title").text("Comments for article: " + data.title);
       var commentItem;
       var commentDeleteBtn;
-      console.log("data comments legnth ", data.comment.length)
+      console.log("data comments length ", data.comments.length)
       for (var i = 0; i < data.comments.length; i++) {
         commentItem = $("<li>").text(data.comments[i].body);
         commentItem.addClass("comment-item-list");
         commentItem.attr("id", data.comments[i]._id);
         
         commentDeleteBtn = $("<button> Delete </button>").addClass("btn btn-danger delete-comment-modal");
-        commentDeleteBtn.attr("data-commentId", data.comment[i]._id);
+        commentDeleteBtn.attr("data-commentId", data.comments[i]._id);
         commentItem.prepend(commentDeleteBtn, " ");
         $(".comments-list").append(commentItem);
       }
@@ -78,11 +78,14 @@ $(document).ready(function() {
       $("#add-comment-modal").modal("toggle");
     });
   
-    // save a note into the database
-    // TODO: add better form validation
-    $(".comment-save-btn").on("click", function(event) {
+    // save a comment into the database
+    $(document).on("click", ".comment-save-btn", function(event) {
+    // $(".comment-save-btn").on("click", function(event) {
       event.preventDefault();
-      var articleId = $("#add-comment-modal").attr("data-articleId")
+      // Grab the id associated with the article from the submit button
+      // var thisId = $(this).attr("data-id");
+      // var articleId = $("#add-comment-modal").attr("data-articleId")
+      var articleId = $(this).attr("data-articleId");
       var newComment = {
         body: $("#comment-body").val().trim()
       }
@@ -90,12 +93,17 @@ $(document).ready(function() {
       $.ajax("/submit/" + articleId, {
         type: "POST",
         data: newComment
-      }).then(
-        function(data) {}
-      );
+      })
+       // With that done
+      .then(function(data) {
+        // Log the response
+      console.log(data);
+      });
+      // Also, remove the values entered in the input and textarea for comment entry
+      $("#comment-body").val("");
     });
   
-    // delete the note that was clicked and remove the whole <li> because the text and delete button are included
+    // delete the comment that was clicked and remove the whole <li> because the text and delete button are included
     $(document).on("click", ".delete-comment-modal", function(event) {
       var commentID = $(this).attr("data-commentId");
   

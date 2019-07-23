@@ -23,6 +23,15 @@ app.use(bodyParser.json({
 // serve the public directory
 app.use(express.static("public"));
 
+// // Determine whether to use local or remote database connection.
+// var connectionString;
+
+// if (process.env.PORT) {
+//     connectionString = "mongodb://pirueto2004:Timbre1966@ds253017.mlab.com:53017/heroku_c5n69kd3";
+// } else {
+//     connectionString = "mongodb://localhost/newspeek-app";
+// }
+
 //Set up promises with mongoose
 mongoose.Promise = Promise; 
 
@@ -49,22 +58,6 @@ app.set("view engine", "handlebars");
 
 // Hook mongojs configuration to the db variable
 var db = require("./models");
-
-//Retrieve all articles from the database that are not saved
-app.get("/", function(req, res) {
-  db.Article.find({
-      saved: false
-    },
-    function(error, dbArticle) {
-      if (error) {
-        console.log(error);
-      } else {
-        res.render("index", {
-          articles: dbArticle
-        });
-      }
-    })
-});
 
 //Routes
 
@@ -112,42 +105,49 @@ app.get("/scrape", function(req, res) {
       };
     });
 
-      // if these are present in the scraped data, create an article in the database collection
-    //   if (result.title && result.link && result.intro) {
-    //     db.Article.create({
-    //       result
-    //         // title: title,
-    //         // link: link,
-    //         // intro: intro
-    //       },
-    //       function(err, inserted) {
-    //         if (err) {
-    //           // log the error if one is encountered during the query
-    //           console.log(err);
-    //         } else {
-    //           // otherwise, log the inserted data
-    //           console.log(inserted);
-    //         }
-    //       });
-    //     // if there are 10 articles, then return the callback to the frontend
-    //     console.log(i);
-    //     if (i === 10) {
-    //       return res.sendStatus(200);
-    //     }
-    //   }
-    // });
+    
     // Send a "Scrape Complete" message to the browser
    res.send("Scrape Complete");
   });
    
 });
 
-// route for retrieving all the saved articles
+// // Route for getting all Articles from the db
+// app.get("/articles", function(req, res) {
+//   // Grab every document in the Articles collection
+//   db.Article.find({})
+//     .then(function(dbArticle) {
+//       // If we were able to successfully find Articles, send them back to the client
+//       res.json(dbArticle);
+//     })
+//     .catch(function(err) {
+//       // If an error occurred, send it to the client
+//       res.json(err);
+//     });
+// });
+
+//Retrieve all articles from the database that are not saved and display them in the home page
+app.get("/", function(req, res) {
+  db.Article.find({
+      saved: false
+    },
+    function(error, dbArticle) {
+      if (error) {
+        console.log(error);
+      } else {
+        res.render("index", {
+          articles: dbArticle
+        });
+      }
+    })
+});
+
+// route for retrieving all the saved articles in the database.
 app.get("/saved", function(req, res) {
   db.Article.find({
       saved: true
     })
-    // ..and populate all of the notes associated with it
+    // ..and populate all of the comments associated with it
     .populate("comment")
     .then(function(dbArticle) {
       // if successful, then render with the handlebars saved page
@@ -180,12 +180,12 @@ app.put("/saved/:id", function(req, res) {
     });
 });
 
-// Route for saving/updating an Article's associated Note
+// Route for saving/updating an Article's associated Comment
 app.post("/articles/:id", function(req, res) {
-  // Create a new note and pass the req.body to the entry
+  // Create a new comment and pass the req.body to the entry
   db.Comment.create(req.body)
     .then(function(dbComment) {
-      // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
+      // If a Comment was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Comment
       // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
       return db.Article.findOneAndUpdate({ _id: req.params.id }, { comment: dbComment._id }, { new: true });
