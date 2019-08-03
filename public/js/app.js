@@ -32,7 +32,7 @@ $(document).ready(function() {
   $('.scrape-new').on('click', function (e){
     e.preventDefault();
     $.ajax({
-      url: '/scrape',
+      url: '/',
       type: 'GET',
       success: function (response) {
         $('#numArticles').text(response.count);
