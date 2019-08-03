@@ -6,15 +6,15 @@
     <div class="row">
         <div class="card bg-light mb-3">
             <div class="card-body">
-                <h3 class="card-title">{{article.title}}</h5>
-                <h5 class="lead articleBody">{{body}}</h5>
+                <h3 class="card-title">{{ article.title }}</h5>
+                <h5 class="lead articleBody">{{ body }}</h5>
             </div>
         </div>
      </div>
 
      <div class="row">
         <div class="col-md-2"></div>
-        <form action="/comment/{{article._id}}" method="POST" class="card col-md-8">
+        <form action="/comment/{{ article._id }}" method="POST" class="card col-md-8">
             <h5>Comment on this article</h5>
             <div class="row">
                 <div class="input-field">
@@ -38,11 +38,11 @@
          <div class="col-md-2"></div>
          <div class="col-md-8">
              <h5>Comments:</h5>
-             {{#if article.comment}}
-                {{#each article.comment}}
+             {{#if article.comment }}
+                {{#each article.comment }}
                     <div class="card">
-                        <p id="nameComment">{{name}}</p>
-                        <p>{{body}}</p>
+                        <p id="nameComment">{{ name }}</p>
+                        <p>{{ body }}</p>
                     </div>
                 {{/each}}
              {{else}}

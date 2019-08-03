@@ -1,33 +1,56 @@
 $(document).ready(function() {
-
-       // when the save button is clicked, get the article ID and set its saved property to true
+    // when the save button is clicked, get its parent element title, link, and intro and build the article to be saved
     $(".save-btn").on("click", function(event) {
-      var newSavedArticle = $(this).data();
-      newSavedArticle.saved = true;
-      console.log("saved was clicked");
-      var id = $(this).attr("data-articleid");
-      $.ajax("/saved/" + id, {
-        type: "PUT",
+      event.preventDefault();
+      // let $index = $(this).attr("data-count");
+      
+      let $title = $(this).parent("div").find(".card-title").text();
+      let $link = $(this).parent("div").find("a.card-link").attr("href");
+      let $intro = $(this).parent("div").find(".card-text").text();
+ 
+      let newSavedArticle = {
+              title : $title,
+              link :  $link,
+              intro : $intro,
+              saved : true
+          };
+       
+      // alert("saved was clicked");
+      // alert(newSavedArticle.title,newSavedArticle.link,newSavedArticle.intro,newSavedArticle.saved);
+
+      //POST request to save the article in the database
+      $.ajax("/saved", {
+        type: "POST",
         data: newSavedArticle
-      }).then(
-        function(data) {
+      }).then(function(data) {
           location.reload();
         }
       );
     });
   
-  // get new articles when the button is clicked
-    $(".scrape-new").on("click", function(event) {
-      event.preventDefault();
-      $.get("/scrape", function(data) {
+  //click event to scrape new articles
+  $('.scrape-new').on('click', function (e){
+    e.preventDefault();
+    $.ajax({
+      url: '/scrape',
+      type: 'GET',
+      success: function (response) {
+        $('#numArticles').text(response.count);
+      },
+      error: function (error) {
+        console.log(error);
+      },
+      complete: function (result){
         window.location.reload();
-      });
+      }
     });
-  
-    // when the button to removed a saved article from the saved list, get the article ID and set its saved property back to false
-  
-    $(".unsave-btn").on("click", function(event) {
-      var newUnsavedArticle = $(this).data();
+  });//end of #scrape click event
+
+
+  // Removing Saved Articles from the database
+	$(document).on("click", ".unsave-btn", function(e) {
+    e.preventDefault();
+    var newUnsavedArticle = $(this).data();
       var id = $(this).attr("data-articleid");
       newUnsavedArticle.saved = false;
       $.ajax("/saved/" + id, {
@@ -38,9 +61,9 @@ $(document).ready(function() {
           location.reload();
         }
       );
-    });
+	});
   
-    // generate the text inside the comments modal
+   // generate the text inside the comments modal
     function createModalHTML(data) {
       var modalText = data.title;
       $("#comment-modal-title").text("Comments for article: " + data.title);
@@ -116,3 +139,22 @@ $(document).ready(function() {
     });
   
   });
+
+  function renderArticles(articles) {
+    let $target = $("#articles");
+    $target.empty()
+      articles.forEach(function(i,element) {
+        let $card = $(`<div class="card bg-light mb-3">`)
+                        .html(`<div class="card bg-light mb-3">
+                          <div class="card-body">
+                            <h5 class="card-title">${title}</h5>
+                            <a href="${link}" class="card-link" target="_blank">View article on Granma International</a>
+                            <p class="card-text">${intro}...</p>
+                            <a data-articleId="${_id}" class="btn btn-success btn-md save-btn">Save article</a>
+                          </div>
+                        </div>`)
+                        $target.append($card)
+        
+      });
+  };
+
