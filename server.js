@@ -57,8 +57,11 @@ dbConnection.once("open", function(){
 
 let db = require("./models");
 
-var Comment = require("./models/Comment");
-var Article = require("./models/Article");
+let Comment = require("./models/Comment");
+let Article = require("./models/Article");
+
+let newArticles;
+let totalCounts;
 
 // ROUTES
 // ==============================================
@@ -66,9 +69,10 @@ var Article = require("./models/Article");
 // apply the routes to our application
 app.use("/", router);
 
+//GET route for the Home page
 router.get("/", function(req, res, next) {
 	Article.find({}, null, {sort: {created: -1}}, function(err, data) {
-		if(data.length === 0) {
+		if(!newArticles) {
 			res.render("index", {
         title: "NewsPeek - News Scraper App",
         message: "There's nothing scraped yet. Please click \"Get Latest Articles\" for fresh and delicious news."
@@ -77,97 +81,21 @@ router.get("/", function(req, res, next) {
 		else{
 			res.render("index", {
                       title: "NewsPeek - News Scraper App",
-                      articles: data
-                      // counts: totalCounts
+                      articles: newArticles,
+                      counts: totalCounts
                   });
 		}
 	});
 });
 
-//GET route for populating the scraped articles on the Home page
-// router.get("/", function(req, res, next){
-    
-//   const scrapedUrl = "http://en.granma.cu";
-//   //Create empty array for pushing the scraped articles into
-//   const newArticles = [];
-//   let totalCounts = 0;
 
-//   // First, we grab the body of the html with axios
-//   axios.get(scrapedUrl).then(function(response) {
-//     // Load the html body from axios into cheerio and save it to $ for a shorthand selector
-    
-//     const $ = cheerio.load(response.data);
-
-//     //Grabbing the site heading article
-//     const siteHeadingArticle = $("div.g-big-story");
-
-//     //Building the heading article
-//     const headingArticle = {};
-//     headingArticle.title = siteHeadingArticle.find("h2").text().trim();
-//     //We grab the string provided in href
-//     const href = siteHeadingArticle.find("h2").children().attr("href"); 
-//     //Build the actual link by prepending the website url to the href string
-//     headingArticle.link = "http://en.granma.cu/" + `${href}`;
-//     headingArticle.intro =  siteHeadingArticle.find("h2").next().text().trim();
-//     //Push article into the array of newArticles
-//     newArticles.push(headingArticle);
-
-//       // Now, we grab every 'article' tag within 'div' with 'g-regular-story' class, and do the following:
-//       const siteArticles = $("div.g-regular-story article");
-
-//           siteArticles.each(function(i, element) {
-
-//                 // Add the h2 text and href of every link, and the p tag with 'sumario' class, and save them as properties of the result object
-//                 let thisTitle = $(element).find("h2").text().trim();
-
-//                 //Grab the string provided in href
-//                 let href = $(element).find("h2 a").attr("href");
-
-//                 //Build the actual link by prepending the website url to the string provided in href
-//                 let thisLink = "http://en.granma.cu" + `${href}`;
-
-//                 let thisIntro = $(element).find(".sumario p").text().trim();
-
-//                 // if these are present in the scraped data, create an article in the database collection
-//                 // Create a new Article using the `result` object built from scraping
-//                   if (thisTitle && thisLink && thisIntro) {
-
-//                     // Create a new article
-//                     let article = {
-//                       title: thisTitle,
-//                       link: thisLink,
-//                       intro: thisIntro,
-//                       saved: false
-//                     };
-
-//                     //Push article into the array of newArticles
-//                     newArticles.push(article);
-//                   };
-//             });
-                
-//           // Send a "Scrape Complete" message to the browser
-//           console.log("Scrape finished.");
-//           console.log(newArticles);
-//           totalCounts = newArticles.length;
-          
-//           res.render("index", {
-//               title: "NewsPeek  - News Scraper App",
-//               articles: newArticles,
-//               counts: totalCounts
-//           });
-   
-// });
-  
-// });
-
-
-//GET route for populating the scraped articles on the Home page
+//GET route for populating the scraped articles on the Scrape page
 router.get("/scrape", function(req, res, next){
     
   const scrapedUrl = "http://en.granma.cu";
   //Create empty array for pushing the scraped articles into
-  const newArticles = [];
-  let totalCounts = 0;
+  newArticles = [];
+  totalCounts = 0;
 
   // First, we grab the body of the html with axios
   axios.get(scrapedUrl).then(function(response) {
