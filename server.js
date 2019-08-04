@@ -66,16 +66,19 @@ var Article = require("./models/Article");
 // apply the routes to our application
 app.use("/", router);
 
-router.get("/", function(req, res) {
+router.get("/", function(req, res, next) {
 	Article.find({}, null, {sort: {created: -1}}, function(err, data) {
 		if(data.length === 0) {
-			res.render("index", {message: "There's nothing scraped yet. Please click \"Get Latest Articles\" for fresh and delicious news."});
+			res.render("index", {
+        title: "NewsPeek - News Scraper App",
+        message: "There's nothing scraped yet. Please click \"Get Latest Articles\" for fresh and delicious news."
+      });
 		}
 		else{
 			res.render("index", {
-                      title: "NewsPeek  - News Scraper App",
-                      articles: newArticles,
-                      counts: totalCounts
+                      title: "NewsPeek - News Scraper App",
+                      articles: data
+                      // counts: totalCounts
                   });
 		}
 	});
