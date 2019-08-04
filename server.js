@@ -62,12 +62,21 @@ let Article = require("./models/Article");
 
 let newArticles;
 let totalCounts;
+let savedArticles = [];
+let isSaved = false;
+
+//Retrieved all the saved articles in database
+db.Article.find({saved: true}).then(function (dbArticle) {
+  savedArticles.push(dbArticle)
+  console.log("Saved Articles :" + savedArticles);
+});
 
 // ROUTES
 // ==============================================
 
 // apply the routes to our application
 app.use("/", router);
+
 
 //GET route for the Home page
 router.get("/", function(req, res, next) {
@@ -114,6 +123,7 @@ router.get("/scrape", function(req, res, next){
     //Build the actual link by prepending the website url to the href string
     headingArticle.link = "http://en.granma.cu/" + `${href}`;
     headingArticle.intro =  siteHeadingArticle.find("h2").next().text().trim();
+    headingArticle.saved = isSaved;
     //Push article into the array of newArticles
     newArticles.push(headingArticle);
 
@@ -126,7 +136,7 @@ router.get("/scrape", function(req, res, next){
                 let thisTitle = $(element).find("h2").text().trim();
 
                 //Grab the string provided in href
-                let href = $(element).find("h2 a").attr("href");
+                let href = $(element).find("h2 a").attr("href").trim();
 
                 //Build the actual link by prepending the website url to the string provided in href
                 let thisLink = "http://en.granma.cu" + `${href}`;
@@ -137,12 +147,28 @@ router.get("/scrape", function(req, res, next){
                 // Create a new Article using the `result` object built from scraping
                   if (thisTitle && thisLink && thisIntro) {
 
+                    // Article.count({ 'title': thisTitle }, function (err, count){ 
+                    //   if(count>0){
+                    //       //document exists });
+                    //       isSaved = true;
+                    //   }
+                    // }); 
+
+                    // db.Article.count_documents({ 'title': thisTitle }, limit = 1) != 0 : isSaved = true;  
+                      
+
+                    
+                    //     .then(function (dbArticle) {
+                    //         console.log(dbArticle);
+                    //         isSaved = true;                                                                       
+                    //     });
+
                     // Create a new article
                     let article = {
                       title: thisTitle,
                       link: thisLink,
                       intro: thisIntro,
-                      saved: false
+                      saved: isSaved
                     };
 
                     //Push article into the array of newArticles

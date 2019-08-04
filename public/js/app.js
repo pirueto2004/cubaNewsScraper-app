@@ -1,9 +1,11 @@
 $(document).ready(function() {
+
     // when the save button is clicked, get its parent element title, link, and intro and build the article to be saved
     $(".save-btn").on("click", function(event) {
       event.preventDefault();
       // let $index = $(this).attr("data-count");
       
+      $(this).removeClass("btn-success").addClass("btn-danger").text("Article Saved");
       let $title = $(this).parent("div").find(".card-title").text();
       let $link = $(this).parent("div").find("a.card-link").attr("href");
       let $intro = $(this).parent("div").find(".card-text").text();
@@ -42,7 +44,7 @@ $(document).ready(function() {
         console.log(error);
       },
       complete: function (result){
-        alert("Scrape finished.");
+        // alert("Scrape finished.");
         //  window.location.reload();
          window.location.href = "/scrape";
       }
