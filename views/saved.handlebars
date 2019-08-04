@@ -8,7 +8,10 @@
     <div class="navbar-nav">
       <a class="my-auto nav-item nav-link" href="/">Home</a>
       <a class="my-auto nav-item nav-link active" href="/saved">Saved articles</a>
-      <a class="my-auto nav-item nav-link btn btn-danger scrape-new" >Get latest articles</a>
+      <form action="/scrape" method="GET">
+			   <button class="my-auto nav-item nav-link btn btn-danger scrape-new" type="submit" id="refresh-articles">Get latest articles</button>
+		  </form>
+      {{!-- <a class="my-auto nav-item nav-link btn btn-danger scrape-new" >Get latest articles</a> --}}
     </div>
   </div>
 </nav>

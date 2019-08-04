@@ -23,7 +23,8 @@ $(document).ready(function() {
         type: "POST",
         data: newSavedArticle
       }).then(function(data) {
-          location.reload();
+          // location.reload();
+          window.location.href = "/saved";
         }
       );
     });
@@ -32,7 +33,7 @@ $(document).ready(function() {
   $('.scrape-new').on('click', function (e){
     e.preventDefault();
     $.ajax({
-      url: '/',
+      url: '/scrape',
       type: 'GET',
       success: function (response) {
         $('#numArticles').text(response.count);
@@ -41,7 +42,9 @@ $(document).ready(function() {
         console.log(error);
       },
       complete: function (result){
-        window.location.reload();
+        alert("Scrape finished.");
+        //  window.location.reload();
+         window.location.href = "/scrape";
       }
     });
   });//end of #scrape click event
