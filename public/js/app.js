@@ -1,5 +1,7 @@
 $(document).ready(function() {
-
+  
+   $(".bg-article.container").empty();
+   
     // when the save button is clicked, get its parent element title, link, and intro and build the article to be saved
     $(".save-btn").on("click", function(event) {
       event.preventDefault();
@@ -18,15 +20,11 @@ $(document).ready(function() {
               saved : true
           };
        
-      // alert("saved was clicked");
-      // alert(newSavedArticle.title,newSavedArticle.link,newSavedArticle.intro,newSavedArticle.saved);
-
       //POST request to save the article in the database
       $.ajax("/saved", {
         type: "POST",
         data: newSavedArticle
       }).then(function(data) {
-          
           location.reload();
         }
       );

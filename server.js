@@ -57,7 +57,6 @@ dbConnection.once("open", function(){
 
 let db = require("./models");
 
-let Comment = require("./models/Comment");
 let Article = require("./models/Article");
 
 let newArticles;
