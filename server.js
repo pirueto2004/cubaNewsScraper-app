@@ -66,10 +66,10 @@ let savedArticles = [];
 let isSaved = false;
 
 //Retrieved all the saved articles in database
-db.Article.find({saved: true}).then(function (dbArticle) {
-  savedArticles.push(dbArticle)
-  console.log("Saved Articles :" + savedArticles);
-});
+// db.Article.find({saved: true}).then(function (dbArticle) {
+//   savedArticles.push(dbArticle)
+//   // console.log("Saved Articles :" + savedArticles);
+// });
 
 // ROUTES
 // ==============================================
@@ -147,22 +147,6 @@ router.get("/scrape", function(req, res, next){
                 // Create a new Article using the `result` object built from scraping
                   if (thisTitle && thisLink && thisIntro) {
 
-                    // Article.count({ 'title': thisTitle }, function (err, count){ 
-                    //   if(count>0){
-                    //       //document exists });
-                    //       isSaved = true;
-                    //   }
-                    // }); 
-
-                    // db.Article.count_documents({ 'title': thisTitle }, limit = 1) != 0 : isSaved = true;  
-                      
-
-                    
-                    //     .then(function (dbArticle) {
-                    //         console.log(dbArticle);
-                    //         isSaved = true;                                                                       
-                    //     });
-
                     // Create a new article
                     let article = {
                       title: thisTitle,
@@ -178,19 +162,25 @@ router.get("/scrape", function(req, res, next){
                 
           // Send a "Scrape Complete" message to the browser
           console.log("Scrape finished.");
-          console.log(newArticles);
-          totalCounts = newArticles.length;
+          // console.log(newArticles);
+          totalCounts = newArticles.length;  
+
+          // var object_in_db = Collection.findOne({key: value});
+
+          //   if (object_in_db) {
+          //     // do something with object....
+          //   }
           
+
           res.render("index", {
               title: "NewsPeek  - Scraped Articles",
               articles: newArticles,
               counts: totalCounts
           });
    
-});
+   });
   
 });
-
 
 //Route for setting an article to saved
 router.post("/saved", function(req, res) {

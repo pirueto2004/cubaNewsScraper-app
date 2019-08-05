@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+  
+
     // when the save button is clicked, get its parent element title, link, and intro and build the article to be saved
     $(".save-btn").on("click", function(event) {
       event.preventDefault();
@@ -25,8 +27,8 @@ $(document).ready(function() {
         type: "POST",
         data: newSavedArticle
       }).then(function(data) {
-          // location.reload();
-          window.location.href = "/saved";
+          
+          location.reload();
         }
       );
     });
@@ -163,3 +165,4 @@ $(document).ready(function() {
       });
   };
 
+ 
