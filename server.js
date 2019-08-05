@@ -60,7 +60,7 @@ let db = require("./models");
 let Comment = require("./models/Comment");
 let Article = require("./models/Article");
 
-let newArticles;
+let newArticles = [];
 let totalCounts;
 let savedArticles = [];
 let isSaved = false;
@@ -103,7 +103,7 @@ router.get("/scrape", function(req, res, next){
     
   const scrapedUrl = "http://en.granma.cu";
   //Create empty array for pushing the scraped articles into
-  newArticles = [];
+  // newArticles = [];
   totalCounts = 0;
 
   // First, we grab the body of the html with axios
