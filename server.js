@@ -60,7 +60,7 @@ let db = require("./models");
 let Comment = require("./models/Comment");
 let Article = require("./models/Article");
 
-let newArticles = [];
+let newArticles;
 let totalCounts;
 let savedArticles = [];
 let isSaved = false;
@@ -76,7 +76,6 @@ let isSaved = false;
 
 // apply the routes to our application
 app.use("/", router);
-
 
 //GET route for the Home page
 router.get("/", function(req, res, next) {
@@ -103,7 +102,7 @@ router.get("/scrape", function(req, res, next){
     
   const scrapedUrl = "http://en.granma.cu";
   //Create empty array for pushing the scraped articles into
-  // newArticles = [];
+  newArticles = [];
   totalCounts = 0;
 
   // First, we grab the body of the html with axios
@@ -163,14 +162,7 @@ router.get("/scrape", function(req, res, next){
           // Send a "Scrape Complete" message to the browser
           console.log("Scrape finished.");
           // console.log(newArticles);
-          totalCounts = newArticles.length;  
-
-          // var object_in_db = Collection.findOne({key: value});
-
-          //   if (object_in_db) {
-          //     // do something with object....
-          //   }
-          
+          totalCounts = newArticles.length;            
 
           res.render("index", {
               title: "NewsPeek  - Scraped Articles",
