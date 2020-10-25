@@ -1,5 +1,6 @@
 //Required dependencies
 //============================================
+require("dotenv").config()
 const express = require("express");
 const mongoose = require("mongoose");
 const request = require("request");
@@ -44,7 +45,7 @@ app.set("view engine", "handlebars");
 mongoose.Promise = Promise; 
 
 //if there's a shell environment variable named MONGODB_URI (deployed), use it; otherwise, connect to localhost
-const dbUrl = process.env.MONGODB_URI || "mongodb://localhost:27017/news";
+const dbUrl = process.env.CONNECTIONSTRING || "mongodb://localhost:27017/myNewsScraperDB";
 
 mongoose.connect(dbUrl, {useNewUrlParser: true});
 
